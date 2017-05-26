@@ -165,14 +165,14 @@ void CameraROS::imgDepthReceivedCallback(
 		{
 			cv::Mat rsz;
 			cv::Mat cpy = ptr->image.clone();
-			std::cout << "scale called:" << std::endl;
-			std::cout << "depth height:" << depth_height << std::endl;
+			//std::cout << "scale called:" << std::endl;
+			//std::cout << "depth height:" << depth_height << std::endl;
 		    if (cpy.rows != depth_height) {
-                std::cout << "bgr scale:" << std::endl;
+                //std::cout << "bgr scale:" << std::endl;
 		        cv::resize(cpy, rsz, ptrDepth->image.size(), 0, 0, CV_INTER_LINEAR);
 		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(rsz);
-			    std::cout << "size depth:" << ptrDepth->image.size() << std::endl;
+			    //std::cout << "size depth:" << ptrDepth->image.size() << std::endl;
 		    } else {
 			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(cpy);
