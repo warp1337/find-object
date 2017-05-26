@@ -150,6 +150,9 @@ void CameraROS::imgDepthReceivedCallback(
 	{
 			ROS_ERROR("find_object_ros: Input type must be rgb=mono8,rgb8,bgr8 and depth=32FC1,16UC1");
 			return;
+	} else {
+	    depth_width = depthMsg->width;
+	    depth_height = depthMsg->height;
 	}
 
 	if(rgbMsg->data.size())
@@ -159,23 +162,45 @@ void CameraROS::imgDepthReceivedCallback(
 		float depthConstant = 1.0f/cameraInfoMsg->K[4];
 		if(rgbMsg->encoding.compare(sensor_msgs::image_encodings::BGR8) == 0)
 		{
+			cv::Mat rsz;
 			cv::Mat cpy = ptr->image.clone();
-			Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
-			Q_EMIT imageReceived(cpy);
+		    if (cpy.rows != depth_height) {
+		        cv::resize(rsz, cpy, cv::Size(depth_width,depth_height), 0, 0, CV_INTER_LINEAR);
+		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
+			    Q_EMIT imageReceived(rsz);
+		    } else {
+			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
+			    Q_EMIT imageReceived(cpy);
+			}
 		}
 		else if(rgbMsg->encoding.compare(sensor_msgs::image_encodings::RGB8) == 0)
 		{
+		    cv::Mat rsz;
 			cv::Mat bgr;
 			cv::cvtColor(ptr->image, bgr, cv::COLOR_RGB2BGR);
-			Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
-			Q_EMIT imageReceived(bgr);
+			if (bgr.rows != depth_height) {
+		        cv::resize(rsz, bgr, cv::Size(depth_width,depth_height), 0, 0, CV_INTER_LINEAR);
+		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
+			    Q_EMIT imageReceived(rsz);
+		    } else {
+			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
+			    Q_EMIT imageReceived(bgr);
+			}
+
 		}
 		else if(rgbMsg->encoding.compare(sensor_msgs::image_encodings::RGBA8) == 0)
 		{
+		    cv::Mat rsz;
 			cv::Mat bgr;
 			cv::cvtColor(ptr->image, bgr, cv::COLOR_RGBA2BGR);
-			Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
-			Q_EMIT imageReceived(bgr);
+			if (bgr.rows != depth_height) {
+		        cv::resize(rsz, bgr, cv::Size(depth_width,depth_height), 0, 0, CV_INTER_LINEAR);
+		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
+			    Q_EMIT imageReceived(rsz);
+		    } else {
+			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
+			    Q_EMIT imageReceived(bgr);
+			}
 		}
 	}
 }
