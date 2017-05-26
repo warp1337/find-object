@@ -165,6 +165,8 @@ void CameraROS::imgDepthReceivedCallback(
 		{
 			cv::Mat rsz;
 			cv::Mat cpy = ptr->image.clone();
+			std::cout << "scale called:" << std::endl;
+			std::cout << "depth height:" << depth_height << std::endl;
 		    if (cpy.rows != depth_height) {
                 std::cout << "bgr scale:" << std::endl;
 		        cv::resize(cpy, rsz, ptrDepth->image.size(), 0, 0, CV_INTER_LINEAR);
