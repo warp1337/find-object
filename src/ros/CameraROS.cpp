@@ -153,7 +153,8 @@ void CameraROS::imgDepthReceivedCallback(
 	} else {
 	    depth_width = depthMsg->width;
 	    depth_height = depthMsg->height;
-	}
+	    std::cout << "Depth Width: " << depth_width << " Depth Height: " << depth_height << std::endl;
+    }
 
 	if(rgbMsg->data.size())
 	{
@@ -165,7 +166,7 @@ void CameraROS::imgDepthReceivedCallback(
 			cv::Mat rsz;
 			cv::Mat cpy = ptr->image.clone();
 		    if (cpy.rows != depth_height) {
-		        cv::resize(rsz, cpy, cv::Size(depth_width,depth_height), 0, 0, CV_INTER_LINEAR);
+		        cv::resize(rsz, cpy, cv::Size(depth_width, depth_height), 0, 0, CV_INTER_LINEAR);
 		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(rsz);
 		    } else {
@@ -179,7 +180,7 @@ void CameraROS::imgDepthReceivedCallback(
 			cv::Mat bgr;
 			cv::cvtColor(ptr->image, bgr, cv::COLOR_RGB2BGR);
 			if (bgr.rows != depth_height) {
-		        cv::resize(rsz, bgr, cv::Size(depth_width,depth_height), 0, 0, CV_INTER_LINEAR);
+		        cv::resize(rsz, bgr, cv::Size(depth_width, depth_height), 0, 0, CV_INTER_LINEAR);
 		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(rsz);
 		    } else {
@@ -194,7 +195,7 @@ void CameraROS::imgDepthReceivedCallback(
 			cv::Mat bgr;
 			cv::cvtColor(ptr->image, bgr, cv::COLOR_RGBA2BGR);
 			if (bgr.rows != depth_height) {
-		        cv::resize(rsz, bgr, cv::Size(depth_width,depth_height), 0, 0, CV_INTER_LINEAR);
+		        cv::resize(rsz, bgr, cv::Size(depth_width, depth_height), 0, 0, CV_INTER_LINEAR);
 		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(rsz);
 		    } else {
