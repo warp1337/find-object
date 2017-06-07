@@ -153,6 +153,8 @@ void CameraROS::imgDepthReceivedCallback(
 	} else {
 	    depth_width = depthMsg->width;
 	    depth_height = depthMsg->height;
+	    rgb_width = rgbMsg->width;
+	    rgb_height = rgbMsg->height;
 	    // std::cout << "Depth Width: " << depth_width << " Depth Height: " << depth_height << std::endl;
     }
 
@@ -163,16 +165,14 @@ void CameraROS::imgDepthReceivedCallback(
 		float depthConstant = 1.0f/cameraInfoMsg->K[4];
 		if(rgbMsg->encoding.compare(sensor_msgs::image_encodings::BGR8) == 0)
 		{
-			cv::Mat rsz;
 			cv::Mat cpy = ptr->image.clone();
-			//std::cout << "scale called:" << std::endl;
-			//std::cout << "depth height:" << depth_height << std::endl;
 		    if (cpy.rows != depth_height) {
-                //std::cout << "bgr scale:" << std::endl;
-		        cv::resize(cpy, rsz, ptrDepth->image.size(), 0, 0, CV_INTER_LINEAR);
-		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
-			    Q_EMIT imageReceived(rsz);
-			    //std::cout << "size depth:" << ptrDepth->image.size() << std::endl;
+	            cv::Mat rsz_d;
+	            cv_bridge::CvImageConstPtr ptrDepth = cv_bridge::toCvShare(depthMsg);
+			    cv::Mat cpy_d = ptrDepth->image.clone();
+	            cv::resize(cpy_d, rsz_d, ptr->image.size(), 0, 0, CV_INTER_LINEAR);
+		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, rsz_d, depthConstant);
+			    Q_EMIT imageReceived(cpy);
 		    } else {
 			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(cpy);
@@ -180,13 +180,15 @@ void CameraROS::imgDepthReceivedCallback(
 		}
 		else if(rgbMsg->encoding.compare(sensor_msgs::image_encodings::RGB8) == 0)
 		{
-		    cv::Mat rsz;
 			cv::Mat bgr;
 			cv::cvtColor(ptr->image, bgr, cv::COLOR_RGB2BGR);
 			if (bgr.rows != depth_height) {
-		        cv::resize(bgr, rsz, ptrDepth->image.size(), 0, 0, CV_INTER_LINEAR);
-		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
-			    Q_EMIT imageReceived(rsz);
+		        cv::Mat rsz_d;
+	            cv_bridge::CvImageConstPtr ptrDepth = cv_bridge::toCvShare(depthMsg);
+			    cv::Mat cpy_d = ptrDepth->image.clone();
+	            cv::resize(cpy_d, rsz_d, ptr->image.size(), 0, 0, CV_INTER_LINEAR);
+		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, rsz_d, depthConstant);
+			    Q_EMIT imageReceived(bgr);
 		    } else {
 			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(bgr);
@@ -195,13 +197,15 @@ void CameraROS::imgDepthReceivedCallback(
 		}
 		else if(rgbMsg->encoding.compare(sensor_msgs::image_encodings::RGBA8) == 0)
 		{
-		    cv::Mat rsz;
 			cv::Mat bgr;
 			cv::cvtColor(ptr->image, bgr, cv::COLOR_RGBA2BGR);
 			if (bgr.rows != depth_height) {
-		        cv::resize(bgr, rsz, ptrDepth->image.size(), 0, 0, CV_INTER_LINEAR);
-		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
-			    Q_EMIT imageReceived(rsz);
+		        cv::Mat rsz_d;
+	            cv_bridge::CvImageConstPtr ptrDepth = cv_bridge::toCvShare(depthMsg);
+			    cv::Mat cpy_d = ptrDepth->image.clone();
+	            cv::resize(cpy_d, rsz_d, ptr->image.size(), 0, 0, CV_INTER_LINEAR);
+		        Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, rsz_d, depthConstant);
+			    Q_EMIT imageReceived(bgr);
 		    } else {
 			    Q_EMIT rosDataReceived(rgbMsg->header.frame_id, rgbMsg->header.stamp, ptrDepth->image, depthConstant);
 			    Q_EMIT imageReceived(bgr);

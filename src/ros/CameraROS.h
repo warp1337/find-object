@@ -75,6 +75,8 @@ private:
 private:
     int depth_width;
     int depth_height;
+    int rgb_width;
+    int rgb_height;
 
 	bool subscribeDepth_;
 	image_transport::Subscriber imageSub_;
